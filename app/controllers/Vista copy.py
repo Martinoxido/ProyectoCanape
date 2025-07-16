@@ -2,7 +2,7 @@ from PyQt5.QtWidgets import QWidget, QFileDialog, QLabel, QPushButton, QVBoxLayo
 from PyQt5.QtGui import QPixmap
 from PyQt5 import uic
 from PyQt5.QtWidgets import QMainWindow
-import core.calculos
+
 from PyQt5.QtCore import pyqtSignal
 import os
 import core.consultas
@@ -77,8 +77,7 @@ class ControladorProductos(QMainWindow):
         # Inicialmente desactivados boton2 y boton3
         self.boton2.setEnabled(False)
         self.boton3.setEnabled(False)
-        self.label_total = QLabel("Total: $0.00")
-        self.contenidoLayout.addWidget(self.label_total)
+
         # Para controlar la tarjeta seleccionada
         self.tarjeta_seleccionada = None
 
@@ -127,8 +126,7 @@ class ControladorProductos(QMainWindow):
         cantidad, ok = QInputDialog.getInt(self, "Cantidad", f"Ingresar cantidad para {tarjeta.nombre}:", 1, 1)
         if ok:
             item = QListWidgetItem(f"{cantidad} x {tarjeta.nombre} - ${tarjeta.precio * cantidad}")
-            self.lista_pedido.addItem(item) 
-            self.actualizar_total()  
+            self.lista_pedido.addItem(item)   
     def editar_tarjeta_seleccionada(self):
         if not self.tarjeta_seleccionada:
             print("No hay tarjeta seleccionada para editar.")
@@ -204,6 +202,3 @@ class ControladorProductos(QMainWindow):
             self.cargar_tarjetas_desde_excel()
         else:
             QMessageBox.warning(self, "Error", "No se pudo agregar el producto.")
-    def actualizar_total(self):
-        total=core.calculos.calcular_total([self.lista_pedido.item(i).text() for i in range(self.lista_pedido.count())])
-        self.label_total.setText(f"Total: ${total:}")

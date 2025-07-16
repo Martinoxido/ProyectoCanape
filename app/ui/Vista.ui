@@ -14,27 +14,90 @@
    <string>Productos</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QVBoxLayout" name="verticalLayout">
+   <layout class="QHBoxLayout" name="horizontalLayout">
     <item>
-     <widget class="QScrollArea" name="scrollArea">
-      <property name="widgetResizable">
-       <bool>true</bool>
-      </property>
-      <widget class="QWidget" name="scrollAreaWidgetContents">
-       <property name="geometry">
-        <rect>
-         <x>0</x>
-         <y>0</y>
-         <width>780</width>
-         <height>400</height>
-        </rect>
-       </property>
-       <layout class="QGridLayout" name="gridLayout" />
-      </widget>
+     <widget class="QWidget" name="navbar">
+      <layout class="QVBoxLayout" name="navbarLayout">
+       <item>
+        <widget class="QPushButton" name="boton1">
+         <property name="text">
+          <string>Nuevo producto</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="boton2">
+         <property name="text">
+          <string>Editar producto</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="boton3">
+         <property name="text">
+          <string>eliminar producto</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="boton4">
+         <property name="text">
+          <string>Botón 4</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="verticalSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeType">
+          <enum>QSizePolicy::Expanding</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QPushButton" name="botonGenerar">
+         <property name="text">
+          <string>Generar archivo</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </widget>
     </item>
     <item>
-     <widget class="QListWidget" name="listaPedido"/>
+     <widget class="QWidget" name="contenidoWidget">
+      <layout class="QVBoxLayout" name="contenidoLayout">
+       <item>
+        <widget class="QScrollArea" name="scrollArea">
+         <property name="widgetResizable">
+          <bool>true</bool>
+         </property>
+         <widget class="QWidget" name="scrollAreaWidgetContents">
+          <property name="geometry">
+           <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>780</width>
+            <height>400</height>
+           </rect>
+          </property>
+          <layout class="QGridLayout" name="gridLayout"/>
+         </widget>
+        </widget>
+       </item>
+       <item>
+        <widget class="QListWidget" name="listaPedido"/>
+       </item>
+      </layout>
+     </widget>
     </item>
    </layout>
   </widget>
