@@ -6,9 +6,10 @@ import core.calculos
 from PyQt5.QtCore import pyqtSignal
 import os
 import core.consultas
+from core.Ingreso_datos import generar_presupuesto_docx
 import config.rutas as dir
-
-
+import random
+import config.rutas
 class TarjetaSeleccionable(QWidget):
     clicked = pyqtSignal(object)  # emitirá la instancia de la tarjeta
 
@@ -71,8 +72,11 @@ class ControladorProductos(QMainWindow):
         self.boton3 = self.findChild(QPushButton, "boton3")
         self.boton3.setEnabled(False)
         self.boton3.clicked.connect(self.eliminar_tarjeta_seleccionada)
-
-        
+        self.boton4 = self.findChild(QPushButton, "boton4")
+        self.boton4.clicked.connect(self.tema_aleatorio)
+        self.botonGenerar=self.findChild(QPushButton,"botonGenerar")
+        self.botonGenerar.clicked.connect(self.generar_presupuesto)
+        self.lista_pedido.itemDoubleClicked.connect(self.eliminar_item_pedido)
 
         # Inicialmente desactivados boton2 y boton3
         self.boton2.setEnabled(False)
@@ -205,5 +209,95 @@ class ControladorProductos(QMainWindow):
         else:
             QMessageBox.warning(self, "Error", "No se pudo agregar el producto.")
     def actualizar_total(self):
+    
         total=core.calculos.calcular_total([self.lista_pedido.item(i).text() for i in range(self.lista_pedido.count())])
         self.label_total.setText(f"Total: ${total:}")
+    def eliminar_item_pedido(self, item):
+        respuesta = QMessageBox.question(
+            self,
+            "Eliminar producto",
+            f"¿Deseas eliminar este producto del pedido?\n\n{item.text()}",
+            QMessageBox.Yes | QMessageBox.No,
+            QMessageBox.No
+        )
+
+        if respuesta == QMessageBox.Yes:
+            fila = self.lista_pedido.row(item)
+            self.lista_pedido.takeItem(fila)
+            self.actualizar_total()
+    def tema_aleatorio(self):
+        colores = [
+            # (fondo navbar, fondo contenido, color botón)
+            ("#1abc9c", "#ecf0f1", "#16a085"),
+            ("#3498db", "#f5f6fa", "#2980b9"),
+            ("#e67e22", "#fefefe", "#d35400"),
+            ("#9b59b6", "#f0f0f0", "#8e44ad"),
+            ("#e74c3c", "#ffffff", "#c0392b"),
+        ]
+
+        navbar_color, fondo_color, boton_color = random.choice(colores)
+
+        estilo = f"""
+        QWidget#navbar {{
+            background-color: {navbar_color};
+            padding: 15px;
+        }}
+        QWidget#contenidoWidget {{
+            background-color: {fondo_color};
+            padding: 12px;
+        }}
+        QPushButton {{
+            background-color: {boton_color};
+            color: white;
+            font-weight: bold;
+            border-radius: 8px;
+            padding: 8px 14px;
+        }}
+        QPushButton:hover {{
+            background-color: #333333;
+        }}
+        QListWidget {{
+            background-color: white;
+            border: 1px solid #ccc;
+        }}
+        QLabel {{
+            color: #2c3e50;
+            font-size: 13px;
+        }}
+        """
+
+        self.setStyleSheet(estilo)
+    def generar_presupuesto(self):
+        # Mostrar popup para pedir nombre del cliente
+        nombre_cliente, ok = QInputDialog.getText(self, "Nombre del cliente", "Ingrese el nombre del cliente:")
+        if not ok or not nombre_cliente.strip():
+            QMessageBox.warning(self, "Cancelado", "Debe ingresar un nombre para generar el presupuesto.")
+            return
+
+        # Obtener lista de productos del pedido
+        textos = [self.lista_pedido.item(i).text() for i in range(self.lista_pedido.count())]
+
+        lista_items = []
+        for texto in textos:
+            try:
+                partes = texto.split(" x ")
+                cantidad = int(partes[0])
+                nombre, precio_str = partes[1].split(" - $")
+                precio_total = float(precio_str)
+                lista_items.append((cantidad, nombre.strip(), precio_total))
+            except Exception as e:
+                print(f"[ERROR] Formato incorrecto: {texto} - {e}")
+
+        if not lista_items:
+            QMessageBox.warning(self, "Sin productos", "No hay productos en el pedido.")
+            return
+
+        # Llamar a la función del core y pasarle la lista y el nombre del cliente
+        
+        generar_presupuesto_docx(lista_items, nombre_cliente)
+        QMessageBox.information(
+        self,
+        "Presupuesto generado",
+        f"El presupuesto para {nombre_cliente} se generó correctamente.\n\nArchivo: {config.rutas.BASE_PATH}\\resources\\Salida"
+        )
+        self.lista_pedido.clear()
