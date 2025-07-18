@@ -12,13 +12,15 @@ df = pd.read_excel(ruta_productos)
 
 def listar_productos_excel():
     productos = []
+    
     for _, row in df.iterrows():
-        producto = {
-            "id": row["id"],
-            "nombre": row["producto"],
-            "precio": row["precio"]
-        }
-        productos.append(producto)
+        if not pd.isna(row["id"]) and not pd.isna(row["producto"]) and  not pd.isna(row["precio"]):
+            producto = {
+                "id": row["id"],
+                "nombre": row["producto"],
+                "precio": row["precio"]
+            }
+            productos.append(producto)
     return productos
 
 def precio_de(producto):
@@ -52,9 +54,7 @@ def editar_producto(producto, nuevoproducto, nuevoprecio):
             return True
     return False    
 
-
-
-def agregar_producto_al_excel(nombre_nuevo, precio_nuevo, ruta_imagen_original=None):
+def agregar_producto_al_excel(nombre_nuevo, precio_nuevo, ruta_imagen_original=""):
     for i, row in df.iterrows():
         if pd.isna(row["id"]) and pd.isna(row["producto"]) and pd.isna(row["precio"]):
             id_nuevo = i + 1
@@ -73,15 +73,12 @@ def agregar_producto_al_excel(nombre_nuevo, precio_nuevo, ruta_imagen_original=N
     destino = os.path.join(base_path, f"{nombre_nuevo}.png")
 
     try:
-        if ruta_imagen_original:
+        if ruta_imagen_original != "":
             # Copiar y convertir imagen pasada
             with Image.open(ruta_imagen_original) as img:
                 img = img.convert("RGBA")
                 img.save(destino, "PNG")
-        else:
-            # Copiar imagen genérica por defecto y renombrar
-            imagen_default = os.path.join(base_path, "generica.png")
-            shutil.copy(imagen_default, destino)
+            
 
         print(f"[OK] Imagen guardada como {nombre_nuevo}.png")
     except Exception as e:
@@ -89,8 +86,6 @@ def agregar_producto_al_excel(nombre_nuevo, precio_nuevo, ruta_imagen_original=N
         return False
 
     return True
-
-    
 
 def eliminar_producto_del_excel(id, producto, precio):
 

@@ -193,21 +193,39 @@ class ControladorProductos(QMainWindow):
         precio, ok2 = QInputDialog.getDouble(self, "Nuevo producto", "Precio del producto:", min=1)
         if not ok2:
             return
-
-        # Seleccionar imagen
-        ruta_imagen, _ = QFileDialog.getOpenFileName(self, "Seleccionar imagen", "", "Imágenes (*.png *.jpg *.jpeg *.bmp *.webp)")
-        if not ruta_imagen:
-            return
-
+        #Pregunta imagen
+        respuesta = QMessageBox.question(
+            self,
+            "Agregar imagen",
+            f"¿Deseas agregar imagen este producto del producto?",
+            QMessageBox.Yes | QMessageBox.No,
+            QMessageBox.No
+        )
+        if respuesta == QMessageBox.Yes:
+            # Seleccionar imagen
+            ruta_imagen, _ = QFileDialog.getOpenFileName(self, "Seleccionar imagen", "", "Imágenes (*.png *.jpg *.jpeg *.bmp *.webp)")
+            if not ruta_imagen:
+                return
+        else:
+            ruta_imagen=""
         # Llamar a core para agregar producto y convertir imagen
         exito = core.consultas.agregar_producto_al_excel(nombre.strip(), precio, ruta_imagen)
+        
 
-        if exito:
+        if exito and ruta_imagen!="":
             QMessageBox.information(self, "Éxito", "Producto agregado correctamente.")
             self.limpiar_tarjetas()
             self.cargar_tarjetas_desde_excel()
-        else:
+        elif not exito:
             QMessageBox.warning(self, "Error", "No se pudo agregar el producto.")
+            self.limpiar_tarjetas()
+            self.cargar_tarjetas_desde_excel()
+        elif exito and ruta_imagen=="":
+            QMessageBox.warning(self, "Ojo", "Se guardó sin imagen. Si quieres agregarle imagen despues consulta el manual.")
+            self.limpiar_tarjetas()
+            self.cargar_tarjetas_desde_excel()
+        else:
+            pass
     def actualizar_total(self):
     
         total=core.calculos.calcular_total([self.lista_pedido.item(i).text() for i in range(self.lista_pedido.count())])
