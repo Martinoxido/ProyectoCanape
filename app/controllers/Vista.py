@@ -7,6 +7,7 @@ from PyQt5.QtCore import pyqtSignal
 import core.convertidor as cnv
 import os
 import core.consultas
+import core.drive as dv
 from core.Ingreso_datos import generar_presupuesto_docx
 import config.rutas as dir
 import random
@@ -312,7 +313,8 @@ class ControladorProductos(QMainWindow):
             return
 
         # Llamar a la función del core y pasarle la lista y el nombre del cliente
-        cnv.convertir_pdf(generar_presupuesto_docx(lista_items, nombre_cliente))
+        print(os.path.join(dir.BASE_PATH,"resources","secret","pepito.json"))
+        dv.subir_a_drive(cnv.convertir_pdf(generar_presupuesto_docx(lista_items, nombre_cliente)).ruta_pdf)
         QMessageBox.information(
         self,
         "Presupuesto generado",
