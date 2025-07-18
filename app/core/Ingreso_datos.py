@@ -3,9 +3,6 @@ import os
 import config.rutas as dir
 from datetime import datetime
 def generar_presupuesto_docx(lista_items, nombre_cliente):
-    import os
-    import config.rutas as dir
-    from docx import Document
 
     base_dir = os.path.dirname(dir.BASE_PATH)
     ruta_plantilla = os.path.join(base_dir, "app", "resources", "Plantillas", "presupuesto_coctel.docx")
@@ -33,12 +30,12 @@ def generar_presupuesto_docx(lista_items, nombre_cliente):
         row = table.add_row().cells
         row[0].text = str(cantidad)
         row[1].text = descripcion
-        row[2].text = f"${total:,}".replace(",", ".")
+        row[2].text = f"${int(total):,}".replace(",", ".")
         total_general += total
 
     for para in doc.paragraphs:
         if "Total:" in para.text:
-            para.text = f"Total: ${total_general:,}".replace(",", ".")
+            para.text = f"Total: ${int(total_general):,}".replace(",", ".")
             break
 
     # Crear nombre del archivo con formato correcto

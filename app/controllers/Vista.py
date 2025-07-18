@@ -4,6 +4,7 @@ from PyQt5 import uic
 from PyQt5.QtWidgets import QMainWindow
 import core.calculos
 from PyQt5.QtCore import pyqtSignal
+import core.convertidor as cnv
 import os
 import core.consultas
 from core.Ingreso_datos import generar_presupuesto_docx
@@ -311,8 +312,7 @@ class ControladorProductos(QMainWindow):
             return
 
         # Llamar a la función del core y pasarle la lista y el nombre del cliente
-        
-        generar_presupuesto_docx(lista_items, nombre_cliente)
+        cnv.convertir_pdf(generar_presupuesto_docx(lista_items, nombre_cliente))
         QMessageBox.information(
         self,
         "Presupuesto generado",
